@@ -7,7 +7,9 @@ namespace UI.Popups.Menu.Gallery
 {
     public class GalleryImageCell : MonoBehaviour
     {
+        [SerializeField] private int premiumInterval;
         [SerializeField] private Image image;
+        [SerializeField] private Image premiumBadge;
         [SerializeField] private RectTransform rectTransform;
 
         public RectTransform Rect => rectTransform;
@@ -22,6 +24,8 @@ namespace UI.Popups.Menu.Gallery
         {
             _url = url;
             _index = index;
+
+            SetupPremium();
         }
 
         public void Load()
@@ -55,6 +59,12 @@ namespace UI.Popups.Menu.Gallery
             image.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.one * 0.5f);
 
             _loaded = true;
+        }
+
+        private void SetupPremium()
+        {
+            var inPremium = _index % premiumInterval == 0;
+            premiumBadge.enabled = inPremium;
         }
     }
 }
