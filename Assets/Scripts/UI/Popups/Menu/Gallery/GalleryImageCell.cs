@@ -11,6 +11,7 @@ namespace UI.Popups.Menu.Gallery
         [SerializeField] private Image image;
         [SerializeField] private Image premiumBadge;
         [SerializeField] private RectTransform rectTransform;
+        [SerializeField] private Button button;
 
         public RectTransform Rect => rectTransform;
         public int Index => _index;
@@ -19,18 +20,32 @@ namespace UI.Popups.Menu.Gallery
         private bool _loaded;
         private Coroutine _loadRoutine;
         private int _index;
+        private Sprite _image;
+        
+        private IPopupService _popupService;
 
-        public void Setup(string url, int index)
+        private void Awake()
+        {
+            button.onClick.AddListener(ShowViewImagePopup);
+        }
+
+        private void OnDestroy()
+        {
+            button.onClick.RemoveListener(ShowViewImagePopup);
+        }
+
+        public void Setup(string url, int index, IPopupService popupService)
         {
             _url = url;
             _index = index;
+            _popupService = popupService;
 
             SetupPremium();
         }
 
         public void Load()
         {
-            if (_loaded || _loadRoutine != null)
+            if (_loaded || _loadRoutine != null || !gameObject.activeInHierarchy)
             {
                 return;
             }
@@ -56,9 +71,20 @@ namespace UI.Popups.Menu.Gallery
 
             var tex = DownloadHandlerTexture.GetContent(req);
 
-            image.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.one * 0.5f);
+            _image = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.one * 0.5f);
+            image.sprite = _image;
 
             _loaded = true;
+        }
+
+        private void ShowViewImagePopup()
+        {
+            if (_image == null)
+            {
+                return;
+            }
+            
+            _popupService.ShowImagePopup(_image);
         }
 
         private void SetupPremium()

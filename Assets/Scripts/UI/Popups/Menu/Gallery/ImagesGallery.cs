@@ -19,9 +19,7 @@ namespace UI.Popups.Menu.Gallery
         [SerializeField] private GalleryImageCell itemPrefab;
         [SerializeField] private ScreenResolutionDetector resolutionDetector;
         [SerializeField] private GalleryTabBar galleryTabBar;
-
-        [Header("Settings")] 
-        [SerializeField] private int preloadRows = 2;
+        [SerializeField] private PopupService popupService;
 
         private readonly List<GalleryImageCell> _items = new();
         private List<string> _links;
@@ -64,7 +62,7 @@ namespace UI.Popups.Menu.Gallery
             {
                 var item = Instantiate(itemPrefab, content);
                 var cellIndex = i + 1;
-                item.Setup(_links[i], cellIndex);
+                item.Setup(_links[i], cellIndex, popupService);
 
                 _items.Add(item);
             }
